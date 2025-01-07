@@ -1,0 +1,51 @@
+//====================================================================================================
+.page {
+  display: flex;
+  flex: 1 1 auto;
+
+  &__main {
+    display: flex;
+    flex: 1 1 auto;
+  }
+
+}
+
+.main {
+
+
+  &__container {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+  }
+
+  &__board {
+    aspect-ratio: 1/1;
+    display: grid;
+
+    width: 100%;
+    // grid-template: repeat(8, 1fr)/repeat(8, 1fr);
+    grid-template: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr / 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    align-content: center;
+    justify-content: center;
+  }
+
+  &__squer {
+    display: block;
+    min-width: 100%;
+
+  }
+}
+
+.squer {
+
+  &__first-color {
+    background-color: #193800;
+  }
+
+  &__second-color {
+    background-color: #bdbdbd;
+  }
+}
+
+//====================================================================================================
