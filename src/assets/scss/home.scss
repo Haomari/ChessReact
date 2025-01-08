@@ -24,7 +24,7 @@
   }
 
   &__board {
-    // transform: rotate(180deg);
+
     // transform: matrix(0, -1, 1, 0, 0, 0);
     display: grid;
 
@@ -38,6 +38,17 @@
     grid-template: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr / 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     align-content: center;
     justify-content: center;
+
+		&.white-turn {
+			transform: rotate(180deg);
+			&>.square::before {
+				transform: rotate(180deg);
+			}
+		}
+
+		&.black-turn {
+			transform: rotate(0deg);
+		}
   }
 
   &__square {

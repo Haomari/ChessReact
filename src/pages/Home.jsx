@@ -98,7 +98,7 @@ export default function Home() {
   function ClickHandel(clikedSquare) {
 		const location = clikedSquare.position
 		console.log(location);
-		
+
 
     if (isSelectedGlobal) {
       squares.forEach((square) => {
@@ -112,9 +112,6 @@ export default function Home() {
                 location.row === move.row &&
                 location.column === move.column
               ) {
-                //
-                // let figurePrams = posibleMoves.figure
-                // figurePrams.location = posibleMoves.moves
 
                 const figureDelete = {
                   isOccupied: false,
@@ -123,25 +120,6 @@ export default function Home() {
                   position: posibleMoves.figure.position,
                   isSelected: false,
                 };
-
-                //
-                // setSquares((prevSquares) => {
-                //   prevSquares.map((square) => {
-                //     if (
-                //       square.position.row === move.row === location.row &&
-                //       square.position.column === move.column === location.column
-                //     ) {
-                // 			return { ...posibleMoves.figure, location: posibleMoves.moves }
-                //     }else if (
-                // 			square.position.row === posibleMoves.figure.location.row &&
-                //       square.position.column === posibleMoves.figure.location.column
-                // 		){
-                // 			return figureDelete
-                // 		}else {
-                // 			return square
-                // 		}
-                //   });
-                // });
 
 								setSquares((prevSquares) =>
 									prevSquares.map((square) => {
@@ -153,9 +131,7 @@ export default function Home() {
 											square.position.column === move.column &&
 											square.position.column === location.column
 										) {
-											console.log({...posibleMoves.figure});
 											return { ...posibleMoves.figure, position: move };
-											console.log('jijasnb');
 										}
 										// Check if square matches the previous figure's location
 										else if (
@@ -163,8 +139,6 @@ export default function Home() {
 											square.position.row === posibleMoves.figure.position.row &&
 											square.position.column === posibleMoves.figure.position.column
 										) {
-											console.log('jij');
-											
 											return figureDelete;
 										}
 										// Return square unchanged if no conditions match
@@ -175,15 +149,7 @@ export default function Home() {
 									})
 								);
 								setIsSelectedGlobal(false)
-
-                // setSquares([{ ...posibleMoves.figure, location: posibleMoves.moves }])
-
-
-
-                // setSquares((prevSquares) => {
-                //   prevSquares.map((square) => square.position.row === move.row === location.row && square.position.column === move.column === location.column ? square : square);
-                // });
-
+								setWhoseTurn((lastTurn) => lastTurn === 'white' ? 'black' : 'white')
                 console.log(squares);
                 console.log(posibleMoves);
               }
@@ -215,10 +181,6 @@ export default function Home() {
   console.log(isSelectedGlobal);
   console.log(posibleMoves);
 
-  /* 	const figures = Figures();
-	console.log(figures.pawn.select(0, {row: 4, column: 4})); */
-  // console.log(Figures());
-
   // console.log(figures.pawn.moves(squares, { row: 4, column: 4 }));
 
   const squaresToGame = squares.map((square, index) => (
@@ -248,7 +210,7 @@ export default function Home() {
     <main className="page">
       <section className="page__main main">
         <div className="main__container">
-          <div className="main__board">{squaresToGame}</div>
+          <div className={`${whoseTurn === 'white' ? 'white-turn' : 'black-turn'} main__board`}>{squaresToGame}</div>
         </div>
       </section>
     </main>

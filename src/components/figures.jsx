@@ -15,20 +15,28 @@ export default function Figures() {
         } */
 
         // Example logic to create a new position
-				const position = squareSelected.position
-				console.log(squares);
-				
+        const position = squareSelected.position;
+        console.log(squares);
 
         let posibleMoves = {
-					figure: {},
-					moves: []
-				};
+          figure: {},
+          moves: [],
+        };
         const log = [];
-        const forwardMove = { row: position.row, column: position.column + 1};
-        const atackMove = [
-          { row: position.row + 1, column: position.column + 1 },
-          { row: position.row - 1, column: position.column + 1 },
-        ];
+        const forwardMove =
+          squareSelected.color == 'white'
+            ? { row: position.row, column: position.column + 1 }
+            : { row: position.row, column: position.column - 1 };
+        const atackMove =
+          squareSelected.color == 'white'
+            ? [
+                { row: position.row + 1, column: position.column + 1 },
+                { row: position.row - 1, column: position.column + 1 },
+              ]
+            : [
+                { row: position.row + 1, column: position.column - 1 },
+                { row: position.row - 1, column: position.column - 1 },
+              ];
         const atackMoveChecked = [];
         atackMove.forEach((move) =>
           move.row >= 9 || move.column <= 0 || move.row >= 9 || move.column <= 0
@@ -36,8 +44,8 @@ export default function Figures() {
             : atackMoveChecked.push(move)
         );
         //forward check
-				console.log(squares);
-				
+        console.log(squares);
+
         squares.forEach((square) => {
           atackMoveChecked.forEach((move) => {
             if (
@@ -46,7 +54,7 @@ export default function Figures() {
             ) {
               if (square.isOccupied) {
                 posibleMoves.moves.push(square.position);
-								posibleMoves.figure = squareSelected
+                posibleMoves.figure = squareSelected;
               }
             }
           });
@@ -59,7 +67,7 @@ export default function Figures() {
           ) {
             if (!square.isOccupied) {
               posibleMoves.moves.push(square.position);
-							posibleMoves.figure = squareSelected
+              posibleMoves.figure = squareSelected;
             }
           }
         });
