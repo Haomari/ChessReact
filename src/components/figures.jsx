@@ -5,7 +5,7 @@ export default function Figures() {
   const figures = {
     pawn: {
       name: "pawn",
-      moves: function (squers, position) {
+      moves: function (squares, squareSelected) {
         /* if (
           !position ||
           typeof position.row !== "number" ||
@@ -15,12 +15,19 @@ export default function Figures() {
         } */
 
         // Example logic to create a new position
-        let posibleMoves = [];
+				const position = squareSelected.position
+				console.log(squares);
+				
+
+        let posibleMoves = {
+					figure: {},
+					moves: []
+				};
         const log = [];
-        const forwardMove = { row: position.row + 1, column: position.column };
+        const forwardMove = { row: position.row, column: position.column + 1};
         const atackMove = [
           { row: position.row + 1, column: position.column + 1 },
-          { row: position.row + 1, column: position.column - 1 },
+          { row: position.row - 1, column: position.column + 1 },
         ];
         const atackMoveChecked = [];
         atackMove.forEach((move) =>
@@ -29,26 +36,30 @@ export default function Figures() {
             : atackMoveChecked.push(move)
         );
         //forward check
-        squers.forEach((squer) => {
+				console.log(squares);
+				
+        squares.forEach((square) => {
           atackMoveChecked.forEach((move) => {
             if (
-              squer.position.row === move.row &&
-              squer.position.column === move.column
+              square.position.row === move.row &&
+              square.position.column === move.column
             ) {
-              if (squer.isOccupied) {
-                posibleMoves.push(squer.position);
+              if (square.isOccupied) {
+                posibleMoves.moves.push(square.position);
+								posibleMoves.figure = squareSelected
               }
             }
           });
         });
         //atack check
-        squers.forEach((squer) => {
+        squares.forEach((square) => {
           if (
-            squer.position.row === forwardMove.row &&
-            squer.position.column === forwardMove.column
+            square.position.row === forwardMove.row &&
+            square.position.column === forwardMove.column
           ) {
-            if (!squer.isOccupied) {
-              posibleMoves.push(squer.position);
+            if (!square.isOccupied) {
+              posibleMoves.moves.push(square.position);
+							posibleMoves.figure = squareSelected
             }
           }
         });
@@ -60,9 +71,9 @@ export default function Figures() {
   return figures;
 }
 
-/* squers.forEach((squer) => 
-	squer.isOccupied === true 
-	? position = squer.position : false
+/* squares.forEach((square) => 
+	square.isOccupied === true 
+	? position = square.position : false
 ) */
 
 // export default function Figures() {
@@ -70,11 +81,11 @@ export default function Figures() {
 // 	const figures = {
 // 		pawn: {
 // 			name: "pawn",
-// 			select: function move(squers, position) {
+// 			select: function move(squares, position) {
 // 				const positionNew = position.assign({rows: position++, position})
 
 // 				return positionNew
-// /* 				squers.forEach(squer => {
+// /* 				squares.forEach(square => {
 
 // 				}); */
 // 			}
