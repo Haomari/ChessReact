@@ -7,6 +7,10 @@ export default function Home() {
   const [isSelectedGlobal, setIsSelectedGlobal] = useState(false);
   const [whoseTurn, setWhoseTurn] = useState("white");
   const [posibleMoves, setPosibleMoves] = useState([]);
+  const [kingPosition, setKingPosition] = useState({
+    white: { row: 4, column: 1 },
+    black: { row: 4, column: 8 },
+  });
 
   /*   function createsquares() {
 		let i = 1, q = 1
@@ -88,6 +92,7 @@ export default function Home() {
           figureType: figureDecider,
           position: { row: i, column: q },
           isSelected: false,
+          everMoved: false,
         });
       }
     }
@@ -95,69 +100,73 @@ export default function Home() {
     return newsquares; // Update state
   }
 
-  function ClickHandel(clikedSquare) {
-		const location = clikedSquare.position
-		console.log(location);
+  function setDynamicPossibleMoves(figureName, squares, clickedSquare) {
+    setPosibleMoves(figures[figureName].moves(squares, clickedSquare, true, whoseTurn));
+    setIsSelectedGlobal(true);
+  }
 
+  function ClickHandel(clikedSquare) {
+    const location = clikedSquare.position;
+    console.log(location);
 
     if (isSelectedGlobal) {
-      squares.forEach((square) => {
-        if (
-          square.position.row === location.row &&
-          square.position.column === location.column
-        ) {
-          if (
-            posibleMoves.moves.forEach((move) => {
-              if (
-                location.row === move.row &&
-                location.column === move.column
-              ) {
+      if (clikedSquare.color !== whoseTurn) {
+        if (posibleMoves.moves.length !== 0) {
+          posibleMoves.moves.forEach((move) => {
+            if (location.row === move.row && location.column === move.column) {
+              const figureDelete = {
+                isOccupied: false,
+                color: "",
+                figureType: "",
+                position: posibleMoves.figure.position,
+                isSelected: false,
+                everMoved: false,
+              };
 
-                const figureDelete = {
-                  isOccupied: false,
-                  color: "",
-                  figureType: "",
-                  position: posibleMoves.figure.position,
-                  isSelected: false,
-                };
-
-								setSquares((prevSquares) =>
-									prevSquares.map((square) => {
-										// Check if square matches the move and location
-										if (
-											square.position && 
-											square.position.row === move.row &&
-											square.position.row === location.row &&
-											square.position.column === move.column &&
-											square.position.column === location.column
-										) {
-											return { ...posibleMoves.figure, position: move };
-										}
-										// Check if square matches the previous figure's location
-										else if (
-											square.position &&
-											square.position.row === posibleMoves.figure.position.row &&
-											square.position.column === posibleMoves.figure.position.column
-										) {
-											return figureDelete;
-										}
-										// Return square unchanged if no conditions match
-										else {
-											console.log('jijas');
-											return square;
-										}
-									})
-								);
-								setIsSelectedGlobal(false)
-								setWhoseTurn((lastTurn) => lastTurn === 'white' ? 'black' : 'white')
-                console.log(squares);
-                console.log(posibleMoves);
-              }
-            })
-          ) {
-          }
+              setSquares((prevSquares) =>
+                prevSquares.map((square) => {
+                  // Check if square matches the move and location
+                  if (
+                    square.position &&
+                    square.position.row === move.row &&
+                    square.position.row === location.row &&
+                    square.position.column === move.column &&
+                    square.position.column === location.column
+                  ) {
+                    return { ...posibleMoves.figure, position: move };
+                  }
+                  // Check if square matches the previous figure's location
+                  else if (
+                    square.position &&
+                    square.position.row === posibleMoves.figure.position.row &&
+                    square.position.column ===
+                      posibleMoves.figure.position.column
+                  ) {
+                    return figureDelete;
+                  }
+                  // Return square unchanged if no conditions match
+                  else {
+                    console.log("jijas");
+                    return square;
+                  }
+                })
+              );
+              setIsSelectedGlobal(false);
+              setWhoseTurn((lastTurn) =>
+                lastTurn === "white" ? "black" : "white"
+              );
+              console.log(squares);
+              console.log(posibleMoves);
+            }
+          });
         }
-      });
+      } else {
+        // setPosibleMoves(figures.pawn.moves(squares, clikedSquare));
+        // setIsSelectedGlobal(true);
+        console.log(clikedSquare.figureType);
+
+        setDynamicPossibleMoves(clikedSquare.figureType, squares, clikedSquare);
+      }
     } else {
       squares.forEach((square) => {
         if (
@@ -166,9 +175,16 @@ export default function Home() {
         ) {
           if (square.isOccupied) {
             if (square.color === whoseTurn) {
-              setIsSelectedGlobal(true);
+              // setIsSelectedGlobal(true);
+              // setPosibleMoves(figures.pawn.moves(squares, clikedSquare));
+
+              setDynamicPossibleMoves(
+                clikedSquare.figureType,
+                squares,
+                clikedSquare
+              );
+
               console.log(isSelectedGlobal);
-              setPosibleMoves(figures.pawn.moves(squares, clikedSquare));
             }
           }
         }
@@ -180,6 +196,7 @@ export default function Home() {
   console.log(figures);
   console.log(isSelectedGlobal);
   console.log(posibleMoves);
+  // console.log(posibleMoves.moves.length);
 
   // console.log(figures.pawn.moves(squares, { row: 4, column: 4 }));
 
@@ -210,7 +227,13 @@ export default function Home() {
     <main className="page">
       <section className="page__main main">
         <div className="main__container">
-          <div className={`${whoseTurn === 'white' ? 'white-turn' : 'black-turn'} main__board`}>{squaresToGame}</div>
+          <div
+            className={`${
+              whoseTurn === "white" ? "white-turn" : "black-turn"
+            } main__board`}
+          >
+            {squaresToGame}
+          </div>
         </div>
       </section>
     </main>
