@@ -101,7 +101,7 @@ export default function Home() {
   }
 
   function setDynamicPossibleMoves(figureName, squares, clickedSquare) {
-    setPosibleMoves(figures[figureName].moves(squares, clickedSquare, true, whoseTurn));
+    setPosibleMoves(figures[figureName].moves(squares, clickedSquare, true, whoseTurn, kingPosition));
     setIsSelectedGlobal(true);
   }
 
