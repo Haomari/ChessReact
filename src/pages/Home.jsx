@@ -10,26 +10,7 @@ export default function Home() {
   const [kingPosition, setKingPosition] = useState({
     white: { row: 4, column: 1 },
     black: { row: 4, column: 8 },
-  });
-
-  /*   function createsquares() {
-		let i = 1, q = 1
-
-    while (q < 9 ) {
-			if(i == 8){
-				i = 1
-				q++
-			}
-      setsquares([
-        ...squares,
-        {
-          isOccupied: false,
-          figureType: "",
-          position: { width: i, height: q},
-        },
-      ]);
-    }
-  } */
+  })
 
   function createsquares() {
     const newsquares = [];
@@ -100,9 +81,26 @@ export default function Home() {
     return newsquares; // Update state
   }
 
-  function setDynamicPossibleMoves(figureName, squares, clickedSquare) {
-    setPosibleMoves(figures[figureName].moves(squares, clickedSquare, true, whoseTurn, kingPosition));
-    setIsSelectedGlobal(true);
+  function dynamicPossibleMoves(figureName, clickedSquare, checkForKing) {
+    if (checkForKing) {
+      setPosibleMoves(
+        figures[figureName].moves(
+          squares,
+          clickedSquare,
+          checkForKing,
+          whoseTurn,
+          kingPosition
+        )
+      );
+      setIsSelectedGlobal(true);
+    } else {
+      return figures[figureName].moves(
+        squares,
+        clickedSquare,
+        false,
+        whoseTurn === "white" ? "black" : "white"
+      );
+    }
   }
 
   function ClickHandel(clikedSquare) {
@@ -151,10 +149,49 @@ export default function Home() {
                   }
                 })
               );
-              setIsSelectedGlobal(false);
-              setWhoseTurn((lastTurn) =>
-                lastTurn === "white" ? "black" : "white"
+
+              const allOponentFigureSquares = squares.filter((square) => {
+                if (square.isOccupied === true && square.color !== whoseTurn) {
+                  if (square.figureType !== "king") {
+                    return true;
+                  } else return false;
+                } else return false;
+              });
+
+              const allOponentFigureMove = allOponentFigureSquares.flatMap(
+                (square) => {
+                  const tempMoves = dynamicPossibleMoves(
+                    square.figureType,
+                    square,
+                    false
+                  ).moves;
+                  return tempMoves;
+                }
               );
+
+							console.log(allOponentFigureMove);
+							
+
+							const kingPositionOpposite =
+							whoseTurn === "white" ? kingPosition.black : kingPosition.white;
+
+							//left her need check if king under attack
+							const kingInDanger = allOponentFigureMove.some((move) => {
+								return kingPositionOpposite.row === move.row &&
+								kingPositionOpposite.column === move.column;
+							});
+
+							console.log(kingInDanger);
+
+							if (kingInDanger) {
+								
+							}else {
+
+						}
+						setIsSelectedGlobal(false);
+						setWhoseTurn((lastTurn) =>
+							lastTurn === "white" ? "black" : "white"
+						);
               console.log(squares);
               console.log(posibleMoves);
             }
@@ -165,7 +202,7 @@ export default function Home() {
         // setIsSelectedGlobal(true);
         console.log(clikedSquare.figureType);
 
-        setDynamicPossibleMoves(clikedSquare.figureType, squares, clikedSquare);
+        dynamicPossibleMoves(clikedSquare.figureType, clikedSquare, true);
       }
     } else {
       squares.forEach((square) => {
@@ -178,11 +215,7 @@ export default function Home() {
               // setIsSelectedGlobal(true);
               // setPosibleMoves(figures.pawn.moves(squares, clikedSquare));
 
-              setDynamicPossibleMoves(
-                clikedSquare.figureType,
-                squares,
-                clikedSquare
-              );
+              dynamicPossibleMoves(clikedSquare.figureType, clikedSquare, true);
 
               console.log(isSelectedGlobal);
             }

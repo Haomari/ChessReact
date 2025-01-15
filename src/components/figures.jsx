@@ -77,6 +77,17 @@ export default function Figures() {
     return moves;
   }
 
+	function dynamicPossibleMoves(figureName, squares, clickedSquare, whoseTurn) {
+		console.log(clickedSquare);
+		console.log(figureName);
+		return figures[figureName].moves(
+			squares,
+			clickedSquare,
+			false,
+			whoseTurn === "white" ? "black" : "white"
+		);
+	}
+
   function checkForKingFnc(
     moves,
     squareSelectedLockal,
@@ -97,17 +108,6 @@ export default function Figures() {
       isSelected: false,
       everMoved: false,
     };
-
-    function setDynamicPossibleMoves(figureName, squares, clickedSquare) {
-      return figures[figureName].moves(
-        squares,
-        clickedSquare,
-        false,
-        whoseTurn
-      );
-    }
-
-    console.log(figureDelete);
 
     moves.map((move) => {
       const newSquares = squares.map((square) => {
@@ -133,36 +133,38 @@ export default function Figures() {
         }
       });
       console.log(newSquares);
+      console.log(whoseTurn);
 
       const allOponentFigureSquares = newSquares.filter((square) => {
-        if (square.color === whoseTurn) {
+        if (square.isOccupied === true && square.color !== whoseTurn) {
           if (
-            square.figureType === "rook" ||
-            square.figureType === "queen" ||
-            square.figureType === "bishop"
+            square.figureType !== "king" 
           ) {
             return true;
-          } else false;
-        } else false;
+          } else return false;
+        } else return false;
       });
 
       console.log(allOponentFigureSquares);
 
       const allOponentFigureMove = allOponentFigureSquares.flatMap((square) => {
-        const tempMoves = setDynamicPossibleMoves(
+        console.log(square.position);
+        const tempMoves = dynamicPossibleMoves(
           square.figureType,
           newSquares,
-          squareSelectedLockal
+          square,
+					whoseTurn
         ).moves;
         return tempMoves;
       });
 
       const canMove = allOponentFigureMove.some((move) => {
-        kingPositionLocal.row === move.row &&
-          kingPositionLocal.column === move.column;
+        return kingPositionLocal.row === move.row &&
+        kingPositionLocal.column === move.column;
       });
 
       console.log(canMove);
+
       console.log(kingPositionLocal);
       console.log(allOponentFigureMove);
 
@@ -173,7 +175,6 @@ export default function Figures() {
     return newMoves;
   }
 
-  const position = {};
   const figures = {
     pawn: {
       name: "pawn",
@@ -193,9 +194,10 @@ export default function Figures() {
           figure: {},
           moves: [],
         };
-        const log = [];
-        let forwardMove = [];
 
+				// forwardMove
+
+        let forwardMove = [];
         if (squareSelectedLockal.color == "white") {
           forwardMove.push({ row: position.row, column: position.column + 1 });
           if (!squareSelectedLockal.everMoved) {
@@ -216,20 +218,9 @@ export default function Figures() {
           }
         }
 
-        // squareSelected.color == 'white'
-        //     ? squareSelected.everMoved
-        // 		? { row: position.row, column: position.column + 1 }
-        // 		: [
-        // 			{ row: position.row, column: position.column + 1 },
-        // 			{ row: position.row, column: position.column + 2 },
-        // 		]
-        //     : squareSelected.everMoved
-        // 		? { row: position.row, column: position.column - 1 }
-        // 		:[
-        // 			{ row: position.row, column: position.column - 1 },
-        // 			{ row: position.row, column: position.column - 2 },
-        // 		];
-        const atackMove =
+				// atackMoves
+
+        const atackMoves =
           squareSelectedLockal.color == "white"
             ? [
                 { row: position.row + 1, column: position.column + 1 },
@@ -239,25 +230,24 @@ export default function Figures() {
                 { row: position.row + 1, column: position.column - 1 },
                 { row: position.row - 1, column: position.column - 1 },
               ];
-        const atackMoveChecked = isOutOfBounce(atackMove);
+        const atackMovesChecked = []
 
-        //forward check
-        console.log(squares);
-
+        //atack check
         squares.forEach((square) => {
-          atackMoveChecked.forEach((move) => {
+          atackMoves.forEach((move) => {
             if (
               square.position.row === move.row &&
               square.position.column === move.column
             ) {
               if (square.isOccupied) {
-                posibleMoves.moves.push(square.position);
-                posibleMoves.figure = squareSelectedLockal;
+                atackMovesChecked.push(square.position);
               }
             }
           });
         });
-        //atack check
+
+
+        //forward check
         squares.forEach((square) => {
           forwardMove.forEach((move) => {
             if (
@@ -266,12 +256,12 @@ export default function Figures() {
             ) {
               if (!square.isOccupied) {
                 posibleMoves.moves.push(square.position);
-                posibleMoves.figure = squareSelectedLockal;
               }
             }
           });
         });
         if (checkForKing) {
+					atackMovesChecked.forEach((move) => posibleMoves.moves.push(move))
           posibleMoves.moves = checkForKingFnc(
             posibleMoves.moves,
             squareSelectedLockal,
@@ -280,11 +270,12 @@ export default function Figures() {
             whoseTurn,
             kingPosition
           );
-
-          return posibleMoves;
         } else {
-          return posibleMoves;
-        }
+					posibleMoves.moves = atackMoves
+				}
+				posibleMoves.figure = squareSelectedLockal;
+				return posibleMoves;
+
       },
     },
     knight: {
@@ -316,6 +307,17 @@ export default function Figures() {
 
         posibleMoves.moves = isOutOfBounce(moves);
         posibleMoves.figure = squareSelectedLockal;
+
+				if (checkForKing) {
+          posibleMoves.moves = checkForKingFnc(
+            posibleMoves.moves,
+            squareSelectedLockal,
+            squares,
+            checkForKing,
+            whoseTurn,
+            kingPosition
+          );
+        } 
 
         return posibleMoves;
       },
@@ -361,6 +363,17 @@ export default function Figures() {
         posibleMoves.moves = isOutOfBounce(moves);
         posibleMoves.figure = squareSelectedLockal;
 
+				if (checkForKing) {
+          posibleMoves.moves = checkForKingFnc(
+            posibleMoves.moves,
+            squareSelectedLockal,
+            squares,
+            checkForKing,
+            whoseTurn,
+            kingPosition
+          );
+        } 
+
         return posibleMoves;
       },
     },
@@ -404,6 +417,17 @@ export default function Figures() {
 
         posibleMoves.moves = isOutOfBounce(moves);
         posibleMoves.figure = squareSelectedLockal;
+
+				if (checkForKing) {
+          posibleMoves.moves = checkForKingFnc(
+            posibleMoves.moves,
+            squareSelectedLockal,
+            squares,
+            checkForKing,
+            whoseTurn,
+            kingPosition
+          );
+        } 
 
         return posibleMoves;
       },
@@ -464,11 +488,22 @@ export default function Figures() {
         posibleMoves.moves = isOutOfBounce(moves);
         posibleMoves.figure = squareSelectedLockal;
 
+				if (checkForKing) {
+          posibleMoves.moves = checkForKingFnc(
+            posibleMoves.moves,
+            squareSelectedLockal,
+            squares,
+            checkForKing,
+            whoseTurn,
+            kingPosition
+          );
+        } 
+
         return posibleMoves;
       },
     },
     king: {
-      moves: function (squares, squareSelected, checkForKing) {
+      moves: function (squares, squareSelected, checkForKing, whoseTurn, kingPosition) {
         let squareSelectedLockal = squareSelected;
         const position = squareSelected.position;
 
@@ -476,21 +511,145 @@ export default function Figures() {
           figure: {},
           moves: [],
         };
-        let moves = [];
 
         // Process each direction
-        moves = [...moves, ...processDirection(-1, -1, squares, position)];
-        moves = [...moves, ...processDirection(1, -1, squares, position)];
-        moves = [...moves, ...processDirection(-1, 1, squares, position)];
-        moves = [...moves, ...processDirection(1, 1, squares, position)];
-        moves = [...moves, ...processDirection(0, -1, squares, position)];
-        moves = [...moves, ...processDirection(1, 0, squares, position)];
-        moves = [...moves, ...processDirection(-1, 0, squares, position)];
-        moves = [...moves, ...processDirection(0, 1, squares, position)];
+        const moves = isOutOfBounce([
+          { row: position.row + 1, column: position.column  },
+          { row: position.row - 1, column: position.column  },
+          { row: position.row , column: position.column + 1 },
+          { row: position.row , column: position.column - 1 },
+          { row: position.row + 1, column: position.column - 1 },
+          { row: position.row - 1, column: position.column - 1 },
+          { row: position.row - 1, column: position.column + 1 },
+          { row: position.row + 1, column: position.column + 1 },
+        ]);
 
         console.log(moves);
 
-        posibleMoves.moves = isOutOfBounce(moves);
+
+        if (checkForKing) {
+
+					const movesFiltered = moves.filter((move) => {
+						const isThereFigure = 
+						squares.some((square) =>{
+							if (move.row === square.position.row &&
+								move.column === square.position.column) {
+								if (square.isOccupied) {
+									if (square.color === whoseTurn) {
+										console.log(whoseTurn);
+										return false
+									} else {
+										const figureDelete = {
+											isOccupied: false,
+											color: "",
+											figureType: "",
+											position: squareSelectedLockal.position,
+											isSelected: false,
+											everMoved: false,
+										};
+
+										const newSquares = squares.map((square) => {
+											if (
+												square.position &&
+												square.position.row === move.row &&
+												square.position.column === move.column
+											) {
+												return { ...squareSelectedLockal, position: move };
+											}
+											// Check if square matches the previous figure's location
+											else if (
+												square.position &&
+												square.position.row === squareSelectedLockal.position.row &&
+												square.position.column === squareSelectedLockal.position.column
+											) {
+												return figureDelete;
+											}
+											// Return square unchanged if no conditions match
+											else {
+												console.log("jijas");
+												return square;
+											}
+										});
+										console.log(newSquares);
+
+										const allOponentFigureSquares = newSquares.filter((square) => {
+											if (square.isOccupied === true && square.color !== whoseTurn) {
+													return true;
+											} else return false;
+										});
+
+										const allOponentFigureMove = allOponentFigureSquares.flatMap(
+											(square) => {
+												const tempMoves = dynamicPossibleMoves(
+													square.figureType,
+													squares,
+													square,
+													whoseTurn
+												).moves;
+												return tempMoves;
+											}
+										);
+										console.log(allOponentFigureMove);
+
+										const isFound = allOponentFigureMove.some((opMove) => {
+											const isFoundLockal = 
+												move.row === opMove.row &&
+												move.column === opMove.column;
+						
+											return isFoundLockal ? false : true
+										})
+
+										console.log(isFound);
+										
+
+										return !isFound 
+
+									}
+								} else {
+									return true
+								}
+							}
+						}) 
+						return isThereFigure
+					})
+
+					console.log(movesFiltered);
+					
+					
+				const allOponentFigureSquares = squares.filter((square) => {
+					if (square.isOccupied === true && square.color !== whoseTurn) {
+							return true;
+					} else return false;
+				});
+
+				const allOponentFigureMove = allOponentFigureSquares.flatMap(
+					(square) => {
+						const tempMoves = dynamicPossibleMoves(
+							square.figureType,
+							squares,
+							square,
+							whoseTurn
+						).moves;
+						return tempMoves;
+					}
+				);
+				console.log(allOponentFigureMove);
+				
+				const movesChecked = movesFiltered.filter((kingMove) => {
+					const isFound = allOponentFigureMove.some((opMove) => {
+						return kingMove.row === opMove.row &&
+						kingMove.column === opMove.column;
+					})
+
+					return !isFound
+				})
+
+				posibleMoves.moves = movesChecked
+
+			} else {
+				posibleMoves.moves = moves
+			}
+
         posibleMoves.figure = squareSelectedLockal;
 
         return posibleMoves;
