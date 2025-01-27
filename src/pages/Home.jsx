@@ -6,7 +6,7 @@ export default function Home() {
   const [figures, setFigures] = useState(Figures());
   const [isSelectedGlobal, setIsSelectedGlobal] = useState(false);
   const [whoseTurn, setWhoseTurn] = useState("white");
-  const [posibleMoves, setPosibleMoves] = useState([]);
+  const [posibleMoves, setPosibleMoves] = useState({});
   const [kingPosition, setKingPosition] = useState({
     white: { row: 4, column: 1 },
     black: { row: 4, column: 8 },
@@ -112,6 +112,11 @@ export default function Home() {
         if (posibleMoves.moves.length !== 0) {
           posibleMoves.moves.forEach((move) => {
             if (location.row === move.row && location.column === move.column) {
+							if (posibleMoves.figure.figureType === 'king') {
+								setKingPosition((prevKingPosition => {
+									return {...prevKingPosition, [whoseTurn]: location}
+								}))
+							}
               const figureDelete = {
                 isOccupied: false,
                 color: "",
@@ -150,13 +155,19 @@ export default function Home() {
                 })
               );
 
+							console.log(squares);
+							
+
               const allOponentFigureSquares = squares.filter((square) => {
-                if (square.isOccupied === true && square.color !== whoseTurn) {
+                if (square.isOccupied === true && square.color == whoseTurn) {
                   if (square.figureType !== "king") {
                     return true;
                   } else return false;
                 } else return false;
               });
+
+							console.log(allOponentFigureSquares);
+							
 
               const allOponentFigureMove = allOponentFigureSquares.flatMap(
                 (square) => {
@@ -175,7 +186,7 @@ export default function Home() {
 							const kingPositionOpposite =
 							whoseTurn === "white" ? kingPosition.black : kingPosition.white;
 
-							//left her need check if king under attack
+							//check if king under attack
 							const kingInDanger = allOponentFigureMove.some((move) => {
 								return kingPositionOpposite.row === move.row &&
 								kingPositionOpposite.column === move.column;
@@ -184,10 +195,24 @@ export default function Home() {
 							console.log(kingInDanger);
 
 							if (kingInDanger) {
-								
-							}else {
+								const allOponentFigureSquares = squares.filter((square) => {
+									if (square.isOccupied === true && square.color !== whoseTurn) {
+										return true
+									} else return false;
+								});
 
-						}
+								const allOponentFigureMove = allOponentFigureSquares.flatMap(
+									(square) => {
+										const tempMoves = dynamicPossibleMoves(
+											square.figureType,
+											square,
+											false
+										).moves;
+										return tempMoves;
+									}
+								);
+							}
+
 						setIsSelectedGlobal(false);
 						setWhoseTurn((lastTurn) =>
 							lastTurn === "white" ? "black" : "white"
@@ -229,6 +254,8 @@ export default function Home() {
   console.log(figures);
   console.log(isSelectedGlobal);
   console.log(posibleMoves);
+	console.log(kingPosition);
+	
   // console.log(posibleMoves.moves.length);
 
   // console.log(figures.pawn.moves(squares, { row: 4, column: 4 }));
