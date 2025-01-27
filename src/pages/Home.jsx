@@ -81,8 +81,17 @@ export default function Home() {
     return newsquares; // Update state
   }
 
-  function dynamicPossibleMoves(figureName, clickedSquare, checkForKing) {
+  function dynamicPossibleMoves(figureName, clickedSquare, checkForKing, newSquares, isKingInDander) {
     if (checkForKing) {
+			if (isKingInDander) {
+					return figures[figureName].moves(
+						newSquares,
+						clickedSquare,
+						checkForKing,
+						whoseTurn === "white" ? "black" : "white",
+						kingPosition
+					)
+			} else {
       setPosibleMoves(
         figures[figureName].moves(
           squares,
@@ -93,12 +102,13 @@ export default function Home() {
         )
       );
       setIsSelectedGlobal(true);
+		}
     } else {
       return figures[figureName].moves(
-        squares,
+        newSquares,
         clickedSquare,
         false,
-        whoseTurn === "white" ? "black" : "white"
+        whoseTurn
       );
     }
   }
@@ -126,8 +136,8 @@ export default function Home() {
                 everMoved: false,
               };
 
-              setSquares((prevSquares) =>
-                prevSquares.map((square) => {
+
+                const newSquares = squares.map((square) => {
                   // Check if square matches the move and location
                   if (
                     square.position &&
@@ -153,12 +163,12 @@ export default function Home() {
                     return square;
                   }
                 })
-              );
 
-							console.log(squares);
+
+							console.log(newSquares);
 							
 
-              const allOponentFigureSquares = squares.filter((square) => {
+              const allOponentFigureSquares = newSquares.filter((square) => {
                 if (square.isOccupied === true && square.color == whoseTurn) {
                   if (square.figureType !== "king") {
                     return true;
@@ -174,7 +184,8 @@ export default function Home() {
                   const tempMoves = dynamicPossibleMoves(
                     square.figureType,
                     square,
-                    false
+                    false,
+										newSquares
                   ).moves;
                   return tempMoves;
                 }
@@ -195,28 +206,50 @@ export default function Home() {
 							console.log(kingInDanger);
 
 							if (kingInDanger) {
-								const allOponentFigureSquares = squares.filter((square) => {
+								const allOponentFigureSquares = newSquares.filter((square) => {
 									if (square.isOccupied === true && square.color !== whoseTurn) {
 										return true
 									} else return false;
 								});
+
+								console.log(allOponentFigureSquares);
+								
 
 								const allOponentFigureMove = allOponentFigureSquares.flatMap(
 									(square) => {
 										const tempMoves = dynamicPossibleMoves(
 											square.figureType,
 											square,
-											false
+											true,
+											newSquares,
+											true
 										).moves;
 										return tempMoves;
 									}
 								);
+
+								console.log(allOponentFigureMove);
+								console.log(allOponentFigureMove.length);
+
+								if (allOponentFigureMove.length === 0) {
+									
+								} else {
+									setSquares(newSquares)
+									setIsSelectedGlobal(false);
+									setWhoseTurn((lastTurn) =>
+										lastTurn === "white" ? "black" : "white"
+									);
+								}
+
+							} else {
+								setSquares(newSquares)
+								setIsSelectedGlobal(false);
+								setWhoseTurn((lastTurn) =>
+									lastTurn === "white" ? "black" : "white"
+								);
 							}
 
-						setIsSelectedGlobal(false);
-						setWhoseTurn((lastTurn) =>
-							lastTurn === "white" ? "black" : "white"
-						);
+
               console.log(squares);
               console.log(posibleMoves);
             }
