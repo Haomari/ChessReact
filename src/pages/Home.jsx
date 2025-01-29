@@ -10,7 +10,8 @@ export default function Home() {
   const [kingPosition, setKingPosition] = useState({
     white: { row: 4, column: 1 },
     black: { row: 4, column: 8 },
-  })
+  });
+  const [win, setWin] = useState(false);
 
   function createsquares() {
     const newsquares = [];
@@ -81,28 +82,34 @@ export default function Home() {
     return newsquares; // Update state
   }
 
-  function dynamicPossibleMoves(figureName, clickedSquare, checkForKing, newSquares, isKingInDander) {
+  function dynamicPossibleMoves(
+    figureName,
+    clickedSquare,
+    checkForKing,
+    newSquares,
+    isKingInDander
+  ) {
     if (checkForKing) {
-			if (isKingInDander) {
-					return figures[figureName].moves(
-						newSquares,
-						clickedSquare,
-						checkForKing,
-						whoseTurn === "white" ? "black" : "white",
-						kingPosition
-					)
-			} else {
-      setPosibleMoves(
-        figures[figureName].moves(
-          squares,
+      if (isKingInDander) {
+        return figures[figureName].moves(
+          newSquares,
           clickedSquare,
           checkForKing,
-          whoseTurn,
+          whoseTurn === "white" ? "black" : "white",
           kingPosition
-        )
-      );
-      setIsSelectedGlobal(true);
-		}
+        );
+      } else {
+        setPosibleMoves(
+          figures[figureName].moves(
+            squares,
+            clickedSquare,
+            checkForKing,
+            whoseTurn,
+            kingPosition
+          )
+        );
+        setIsSelectedGlobal(true);
+      }
     } else {
       return figures[figureName].moves(
         newSquares,
@@ -115,18 +122,17 @@ export default function Home() {
 
   function ClickHandel(clikedSquare) {
     const location = clikedSquare.position;
-    console.log(location);
 
     if (isSelectedGlobal) {
       if (clikedSquare.color !== whoseTurn) {
         if (posibleMoves.moves.length !== 0) {
           posibleMoves.moves.forEach((move) => {
             if (location.row === move.row && location.column === move.column) {
-							if (posibleMoves.figure.figureType === 'king') {
-								setKingPosition((prevKingPosition => {
-									return {...prevKingPosition, [whoseTurn]: location}
-								}))
-							}
+              if (posibleMoves.figure.figureType === "king") {
+                setKingPosition((prevKingPosition) => {
+                  return { ...prevKingPosition, [whoseTurn]: location };
+                });
+              }
               const figureDelete = {
                 isOccupied: false,
                 color: "",
@@ -136,37 +142,30 @@ export default function Home() {
                 everMoved: false,
               };
 
-
-                const newSquares = squares.map((square) => {
-                  // Check if square matches the move and location
-                  if (
-                    square.position &&
-                    square.position.row === move.row &&
-                    square.position.row === location.row &&
-                    square.position.column === move.column &&
-                    square.position.column === location.column
-                  ) {
-                    return { ...posibleMoves.figure, position: move };
-                  }
-                  // Check if square matches the previous figure's location
-                  else if (
-                    square.position &&
-                    square.position.row === posibleMoves.figure.position.row &&
-                    square.position.column ===
-                      posibleMoves.figure.position.column
-                  ) {
-                    return figureDelete;
-                  }
-                  // Return square unchanged if no conditions match
-                  else {
-                    console.log("jijas");
-                    return square;
-                  }
-                })
-
-
-							console.log(newSquares);
-							
+              const newSquares = squares.map((square) => {
+                // Check if square matches the move and location
+                if (
+                  square.position &&
+                  square.position.row === move.row &&
+                  square.position.row === location.row &&
+                  square.position.column === move.column &&
+                  square.position.column === location.column
+                ) {
+                  return { ...posibleMoves.figure, position: move };
+                }
+                // Check if square matches the previous figure's location
+                else if (
+                  square.position &&
+                  square.position.row === posibleMoves.figure.position.row &&
+                  square.position.column === posibleMoves.figure.position.column
+                ) {
+                  return figureDelete;
+                }
+                // Return square unchanged if no conditions match
+                else {
+                  return square;
+                }
+              });
 
               const allOponentFigureSquares = newSquares.filter((square) => {
                 if (square.isOccupied === true && square.color == whoseTurn) {
@@ -176,90 +175,77 @@ export default function Home() {
                 } else return false;
               });
 
-							console.log(allOponentFigureSquares);
-							
-
               const allOponentFigureMove = allOponentFigureSquares.flatMap(
                 (square) => {
                   const tempMoves = dynamicPossibleMoves(
                     square.figureType,
                     square,
                     false,
-										newSquares
+                    newSquares
                   ).moves;
                   return tempMoves;
                 }
               );
 
-							console.log(allOponentFigureMove);
-							
+              const kingPositionOpposite =
+                whoseTurn === "white" ? kingPosition.black : kingPosition.white;
 
-							const kingPositionOpposite =
-							whoseTurn === "white" ? kingPosition.black : kingPosition.white;
+              //check if king under attack
+              const kingInDanger = allOponentFigureMove.some((move) => {
+                return (
+                  kingPositionOpposite.row === move.row &&
+                  kingPositionOpposite.column === move.column
+                );
+              });
 
-							//check if king under attack
-							const kingInDanger = allOponentFigureMove.some((move) => {
-								return kingPositionOpposite.row === move.row &&
-								kingPositionOpposite.column === move.column;
-							});
+              // console.log(kingInDanger);
 
-							console.log(kingInDanger);
+              if (kingInDanger) {
+                const allOponentFigureSquares = newSquares.filter((square) => {
+                  if (
+                    square.isOccupied === true &&
+                    square.color !== whoseTurn
+                  ) {
+                    return true;
+                  } else return false;
+                });
 
-							if (kingInDanger) {
-								const allOponentFigureSquares = newSquares.filter((square) => {
-									if (square.isOccupied === true && square.color !== whoseTurn) {
-										return true
-									} else return false;
-								});
+                const allOponentFigureMove = allOponentFigureSquares.flatMap(
+                  (square) => {
+                    const tempMoves = dynamicPossibleMoves(
+                      square.figureType,
+                      square,
+                      true,
+                      newSquares,
+                      true
+                    ).moves;
+                    return tempMoves;
+                  }
+                );
 
-								console.log(allOponentFigureSquares);
-								
+                if (allOponentFigureMove.length === 0) {
+                  setWin(true);
+                  setIsSelectedGlobal(false);
+                  setSquares(newSquares);
+                } else {
+                  setSquares(newSquares);
+                  setIsSelectedGlobal(false);
+                  setWhoseTurn((lastTurn) =>
+                    lastTurn === "white" ? "black" : "white"
+                  );
+                }
+              } else {
+                setSquares(newSquares);
+                setIsSelectedGlobal(false);
+                setWhoseTurn((lastTurn) =>
+                  lastTurn === "white" ? "black" : "white"
+                );
+              }
 
-								const allOponentFigureMove = allOponentFigureSquares.flatMap(
-									(square) => {
-										const tempMoves = dynamicPossibleMoves(
-											square.figureType,
-											square,
-											true,
-											newSquares,
-											true
-										).moves;
-										return tempMoves;
-									}
-								);
-
-								console.log(allOponentFigureMove);
-								console.log(allOponentFigureMove.length);
-
-								if (allOponentFigureMove.length === 0) {
-									
-								} else {
-									setSquares(newSquares)
-									setIsSelectedGlobal(false);
-									setWhoseTurn((lastTurn) =>
-										lastTurn === "white" ? "black" : "white"
-									);
-								}
-
-							} else {
-								setSquares(newSquares)
-								setIsSelectedGlobal(false);
-								setWhoseTurn((lastTurn) =>
-									lastTurn === "white" ? "black" : "white"
-								);
-							}
-
-
-              console.log(squares);
-              console.log(posibleMoves);
             }
           });
         }
       } else {
-        // setPosibleMoves(figures.pawn.moves(squares, clikedSquare));
-        // setIsSelectedGlobal(true);
-        console.log(clikedSquare.figureType);
-
         dynamicPossibleMoves(clikedSquare.figureType, clikedSquare, true);
       }
     } else {
@@ -270,12 +256,7 @@ export default function Home() {
         ) {
           if (square.isOccupied) {
             if (square.color === whoseTurn) {
-              // setIsSelectedGlobal(true);
-              // setPosibleMoves(figures.pawn.moves(squares, clikedSquare));
-
               dynamicPossibleMoves(clikedSquare.figureType, clikedSquare, true);
-
-              console.log(isSelectedGlobal);
             }
           }
         }
@@ -283,15 +264,11 @@ export default function Home() {
     }
   }
 
-  console.log(squares);
-  console.log(figures);
-  console.log(isSelectedGlobal);
-  console.log(posibleMoves);
-	console.log(kingPosition);
-	
-  // console.log(posibleMoves.moves.length);
-
-  // console.log(figures.pawn.moves(squares, { row: 4, column: 4 }));
+  // console.log(squares);
+  // console.log(figures);
+  // console.log(isSelectedGlobal);
+  // console.log(posibleMoves);
+  // console.log(kingPosition);
 
   const squaresToGame = squares.map((square, index) => (
     <button
@@ -312,7 +289,32 @@ export default function Home() {
     </button>
   ));
 
-  console.log(squaresToGame);
+
+  const winBlock = (
+    <div className="main__win-block win-block">
+      <div className="win-block__body">
+        <h3 className="win-block__title">
+          <span>{whoseTurn}</span> won
+        </h3>
+        <button
+          onClick={() => {
+            setSquares(createsquares());
+						setWin(false)
+						setIsSelectedGlobal(false)
+						setWhoseTurn('white')
+						setKingPosition({
+							white: { row: 4, column: 1 },
+							black: { row: 4, column: 8 },
+						})
+						setPosibleMoves({})
+          }}
+          className="win-block__button"
+        >
+          reset
+        </button>
+      </div>
+    </div>
+  );
 
   // <div className="home__square square square__first-color"></div>
 
@@ -327,6 +329,7 @@ export default function Home() {
           >
             {squaresToGame}
           </div>
+          {win && winBlock}
         </div>
       </section>
     </main>

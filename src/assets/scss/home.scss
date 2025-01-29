@@ -1,5 +1,28 @@
 //====================================================================================================
 
+
+@keyframes bg-transition {
+
+  0% {
+    background: #00132500;
+  }
+
+  100% {
+    background: #001d2e85;
+  }
+}
+
+@keyframes color-transition {
+
+  0% {
+    color: #ffffff00;
+  }
+
+  100% {
+    color: #ffffff
+  }
+}
+
 .page {
   display: flex;
   flex: 1 1 auto;
@@ -7,6 +30,7 @@
   &__main {
     display: flex;
     flex: 1 1 auto;
+    position: relative;
   }
 
 }
@@ -18,9 +42,10 @@
     display: flex;
     flex: 1 1 auto;
     align-items: center;
-		justify-content: center;
-		min-height: 100%;
-		height: 0;
+    justify-content: center;
+    min-height: 100%;
+    height: 0;
+
   }
 
   &__board {
@@ -28,108 +53,200 @@
     // transform: matrix(0, -1, 1, 0, 0, 0);
     display: grid;
 
-		// @if ()
-		max-width: em(1200);
-		max-height: em(1200);
-		width:  95vmin;
-		aspect-ratio: 1/1;
-		// min-height: 20%;
+    
+    max-width: em(1200);
+    max-height: em(1200);
+    width: 100%;
+
+    aspect-ratio: 1/1;
+    // min-height: 20%;
     // grid-template: repeat(8, 1fr)/repeat(8, 1fr);
     grid-template: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr / 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     align-content: center;
     justify-content: center;
 
-		&.white-turn {
-			transform: rotate(180deg);
-			&>.square::before {
-				transform: rotate(180deg);
-			}
+		@media (min-aspect-ratio: 10/11) {
+			height: 92%;
+			width: auto;
 		}
 
-		&.black-turn {
-			transform: rotate(0deg);
-		}
+    &.white-turn {
+      transform: rotate(180deg);
+
+      &>.square::before {
+        transform: rotate(180deg);
+      }
+    }
+
+    &.black-turn {
+      transform: rotate(0deg);
+    }
   }
+
+
+  &__win-block {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+
+    animation-name: bg-transition;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: 1;
+    animation-direction: normal;
+    animation-play-state: running;
+    animation-delay: 0s;
+    animation-fill-mode: forwards;
+
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & .win-block {
+      &__body {
+        padding: 5%;
+				display: flex;
+				flex-direction: column;
+      }
+
+      &__title {
+        @include adaptiveValue("font-size", 92, 60);
+				font-family: "Tangerine", serif;
+        color: rgb(255, 255, 255);
+
+        animation-name: color-transition;
+        animation-duration: 0.5s;
+        animation-timing-function: linear;
+        animation-iteration-count: 1;
+        animation-direction: normal;
+        animation-delay: 0s;
+        animation-fill-mode: forwards;
+
+        @include adaptiveValue("margin-bottom", 40, 25);
+
+        & span {
+          text-transform: capitalize;
+        }
+      }
+
+      &__button {
+				@include adaptiveValue("font-size", 40, 25);
+				font-family: "Sour Gummy", serif;
+				transition: all 0.3s ease;
+				@include adaptiveValue("padding", 40, 20);
+				padding: rem(40)  0;
+				text-align: center;
+				background: #47474763;
+				color: #ffffff;
+				border-radius: 10px;
+				border: 1px solid #47474763;
+				line-height: 0;
+
+				@media (any-hover: hover){
+					&:hover{
+						color: #87daa7;
+						background: #47474700;
+						border-color: #ffffff;
+					}
+				}
+			}
+    }
+  }
+
 
   &__square {
     display: block;
-		// aspect-ratio: 1/1;
+    // aspect-ratio: 1/1;
     min-width: 100%;
-		min-height: 100%;
-		position: relative;
+    min-height: 100%;
+    position: relative;
 
-		&::before {
+    &::before {
       content: '';
       position: absolute;
       width: 100%;
       height: 100%;
       top: 0;
       left: 0;
-			padding: 10px;
-		}
-  
-
-	&.pawn.black {
-		&::before {
-			background: url('../img/figures/Chess_pdt45.svg') center/cover no-repeat;
+      padding: 10px;
     }
-	}
-	&.pawn.white{
-		&::before {
-		background: url('../img/figures/pawn_white.svg') center/cover no-repeat;
-		}
-	}
-	&.rook.white{
-		&::before {
-		background: url('../img/figures/rook_white.svg') center/cover no-repeat;
-		}
-	}
-	&.rook.black{
-		&::before {
-		background: url('../img/figures/rook_black.svg') center/cover no-repeat;
-		}
-	}
-	&.king.white{
-		&::before {
-		background: url('../img/figures/king_white.svg') center/cover no-repeat;
-		}
-	}
-	&.king.black{
-		&::before {
-		background: url('../img/figures/king_black.svg') center/cover no-repeat;
-		}
-	}
-	&.queen.white{
-		&::before {
-		background: url('../img/figures/queen_white.svg') center/cover no-repeat;
-		}
-	}
-	&.queen.black{
-		&::before {
-		background: url('../img/figures/queen_black.svg') center/cover no-repeat;
-		}
-	}
-	&.bishop.white{
-		&::before {
-		background: url('../img/figures/bishop_white.svg') center/cover no-repeat;
-		}
-	}
-	&.bishop.black{
-		&::before {
-		background: url('../img/figures/bishop_black.svg') center/cover no-repeat;
-		}
-	}
-	&.knight.white{
-		&::before {
-		background: url('../img/figures/knight_white.svg') center/cover no-repeat;
-		}
-	}
-	&.knight.black{
-		&::before {
-		background: url('../img/figures/knight_black.svg') center/cover no-repeat;
-		}
-	}
-	}
+
+
+    &.pawn.black {
+      &::before {
+        background: url('../img/figures/Chess_pdt45.svg') center/cover no-repeat;
+      }
+    }
+
+    &.pawn.white {
+      &::before {
+        background: url('../img/figures/pawn_white.svg') center/cover no-repeat;
+      }
+    }
+
+    &.rook.white {
+      &::before {
+        background: url('../img/figures/rook_white.svg') center/cover no-repeat;
+      }
+    }
+
+    &.rook.black {
+      &::before {
+        background: url('../img/figures/rook_black.svg') center/cover no-repeat;
+      }
+    }
+
+    &.king.white {
+      &::before {
+        background: url('../img/figures/king_white.svg') center/cover no-repeat;
+      }
+    }
+
+    &.king.black {
+      &::before {
+        background: url('../img/figures/king_black.svg') center/cover no-repeat;
+      }
+    }
+
+    &.queen.white {
+      &::before {
+        background: url('../img/figures/queen_white.svg') center/cover no-repeat;
+      }
+    }
+
+    &.queen.black {
+      &::before {
+        background: url('../img/figures/queen_black.svg') center/cover no-repeat;
+      }
+    }
+
+    &.bishop.white {
+      &::before {
+        background: url('../img/figures/bishop_white.svg') center/cover no-repeat;
+      }
+    }
+
+    &.bishop.black {
+      &::before {
+        background: url('../img/figures/bishop_black.svg') center/cover no-repeat;
+      }
+    }
+
+    &.knight.white {
+      &::before {
+        background: url('../img/figures/knight_white.svg') center/cover no-repeat;
+      }
+    }
+
+    &.knight.black {
+      &::before {
+        background: url('../img/figures/knight_black.svg') center/cover no-repeat;
+      }
+    }
+  }
 }
 
 .square {

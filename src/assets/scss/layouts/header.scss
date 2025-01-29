@@ -1,5 +1,23 @@
 //====================================================================================================
+.header {
+	background: #000;
 
+	&__container {
+		display: flex;
+		justify-content: start;
+
+		@include adaptiveValue("padding", 20, 15);
+	}
+	&__logo {
+		display: block;
+
+		@include adaptiveValue("font-size", 60, 35);
+
+		font-family: "Tangerine", serif;
+		font-weight: 700;
+		color: #fff;
+	}
+}
 //====================================================================================================
 
 //Burger

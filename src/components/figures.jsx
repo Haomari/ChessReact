@@ -25,13 +25,10 @@ export default function Figures() {
 
     while (!stop && i <= 8 && i >= 0) {
       // Stop when i exceeds 8
-      console.log(deltaRow, deltaColumn, squares, position, whoseTurn);
 
-      console.log("raz"); // Debugging log
       let foundSquare = false; // Track if any square matched
 
       for (let square of squares) {
-        console.log("raz2"); // Debugging log
 
         if (
           square.position.row === position.row + i * deltaRow &&
@@ -45,16 +42,13 @@ export default function Figures() {
                 row: position.row + i * deltaRow,
                 column: position.column + i * deltaColumn,
               });
-              // console.log("suc op fig");
               stop = true; // Stop if occupied
               break;
             } else {
               stop = true; // Stop if occupied
-              // console.log("skip our fig");
               break;
             }
           } else {
-            // console.log("suc nothig there");
             moves.push({
               row: position.row + i * deltaRow,
               column: position.column + i * deltaColumn,
@@ -62,7 +56,6 @@ export default function Figures() {
             break; // Exit the `for` loop since square is processed
           }
         } else {
-          // console.log("skip");
         }
       }
 
@@ -72,14 +65,12 @@ export default function Figures() {
 
       i++; // Increment i regardless of conditions
     }
-    console.log(moves);
+
 
     return moves;
   }
 
 	function dynamicPossibleMoves(figureName, squares, clickedSquare, whoseTurn) {
-		console.log(clickedSquare);
-		console.log(figureName);
 		return figures[figureName].moves(
 			squares,
 			clickedSquare,
@@ -128,12 +119,9 @@ export default function Figures() {
         }
         // Return square unchanged if no conditions match
         else {
-          console.log("jijas");
           return square;
         }
       });
-      console.log(newSquares);
-      console.log(whoseTurn);
 
       const allOponentFigureSquares = newSquares.filter((square) => {
         if (square.isOccupied === true && square.color !== whoseTurn) {
@@ -145,10 +133,8 @@ export default function Figures() {
         } else return false;
       });
 
-      console.log(allOponentFigureSquares);
 
       const allOponentFigureMove = allOponentFigureSquares.flatMap((square) => {
-        console.log(square.position);
         const tempMoves = dynamicPossibleMoves(
           square.figureType,
           newSquares,
@@ -163,10 +149,7 @@ export default function Figures() {
         kingPositionLocal.column === move.column;
       });
 
-      console.log(canMove);
 
-      console.log(kingPositionLocal);
-      console.log(allOponentFigureMove);
 
       if (!canMove) {
         newMoves.push(move);
@@ -188,7 +171,6 @@ export default function Figures() {
         // Example logic to create a new position
         const position = squareSelected.position;
         let squareSelectedLockal = squareSelected;
-        console.log(squares);
 
         let posibleMoves = {
           figure: {},
@@ -358,7 +340,6 @@ export default function Figures() {
           ...processDirection(0, 1, squares, position, whoseTurn),
         ];
 
-        console.log(moves);
 
         posibleMoves.moves = isOutOfBounce(moves);
         posibleMoves.figure = squareSelectedLockal;
@@ -412,8 +393,6 @@ export default function Figures() {
           ...moves,
           ...processDirection(1, 1, squares, position, whoseTurn),
         ];
-
-        console.log(moves);
 
         posibleMoves.moves = isOutOfBounce(moves);
         posibleMoves.figure = squareSelectedLockal;
@@ -483,8 +462,6 @@ export default function Figures() {
           ...processDirection(0, 1, squares, position, whoseTurn),
         ];
 
-        console.log(moves);
-
         posibleMoves.moves = isOutOfBounce(moves);
         posibleMoves.figure = squareSelectedLockal;
 
@@ -524,8 +501,6 @@ export default function Figures() {
           { row: position.row + 1, column: position.column + 1 },
         ]);
 
-        console.log(moves);
-
 
         if (checkForKing) {
 
@@ -536,7 +511,6 @@ export default function Figures() {
 								move.column === square.position.column) {
 								if (square.isOccupied) {
 									if (square.color === whoseTurn) {
-										console.log(whoseTurn);
 										return false
 									} else {
 										const figureDelete = {
@@ -566,11 +540,9 @@ export default function Figures() {
 											}
 											// Return square unchanged if no conditions match
 											else {
-												console.log("jijas");
 												return square;
 											}
 										});
-										console.log(newSquares);
 
 										const allOponentFigureSquares = newSquares.filter((square) => {
 											if (square.isOccupied === true && square.color !== whoseTurn) {
@@ -589,7 +561,6 @@ export default function Figures() {
 												return tempMoves;
 											}
 										);
-										console.log(allOponentFigureMove);
 
 										const isFound = allOponentFigureMove.some((opMove) => {
 											const isFoundLockal = 
@@ -597,10 +568,7 @@ export default function Figures() {
 												move.column === opMove.column;
 						
 											return isFoundLockal ? false : true
-										})
-
-										console.log(isFound);
-										
+										})										
 
 										return !isFound 
 
@@ -612,8 +580,6 @@ export default function Figures() {
 						}) 
 						return isThereFigure
 					})
-
-					console.log(movesFiltered);
 					
 					
 				const allOponentFigureSquares = squares.filter((square) => {
@@ -633,7 +599,6 @@ export default function Figures() {
 						return tempMoves;
 					}
 				);
-				console.log(allOponentFigureMove);
 				
 				const movesChecked = movesFiltered.filter((kingMove) => {
 					const isFound = allOponentFigureMove.some((opMove) => {

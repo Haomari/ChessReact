@@ -1,3 +1,21 @@
 //====================================================================================================
+.footer {
+	background: #000;
 
+	&__container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		@include adaptiveValue("padding", 20, 15);
+	}
+	&__link {
+		display: block;
+
+		@include adaptiveValue("font-size", 30, 20);
+
+		font-family: "Sour Gummy", serif;
+		color: #fff;
+	}
+}
 //====================================================================================================
