@@ -12,6 +12,7 @@ export default function Home() {
     black: { row: 4, column: 8 },
   });
   const [win, setWin] = useState(false);
+  const [selectedSquare, setSelectedSquare] = useState({ row: 0, column: 0 });
 
   function createsquares() {
     const newsquares = [];
@@ -241,12 +242,12 @@ export default function Home() {
                   lastTurn === "white" ? "black" : "white"
                 );
               }
-
             }
           });
         }
       } else {
         dynamicPossibleMoves(clikedSquare.figureType, clikedSquare, true);
+        setSelectedSquare(clikedSquare.position);
       }
     } else {
       squares.forEach((square) => {
@@ -257,6 +258,7 @@ export default function Home() {
           if (square.isOccupied) {
             if (square.color === whoseTurn) {
               dynamicPossibleMoves(clikedSquare.figureType, clikedSquare, true);
+              setSelectedSquare(clikedSquare.position);
             }
           }
         }
@@ -282,13 +284,15 @@ export default function Home() {
           ? "square__second-color"
           : "square__first-color"
       }
-			${square.figureType} ${square.color}`}
+			${square.figureType} ${square.color} ${
+        square.position.row === selectedSquare.row &&
+        square.position.column === selectedSquare.column
+          ? "selected"
+          : ""
+      }`}
       onClick={() => ClickHandel(square)}
-    >
-      {index}
-    </button>
+    ></button>
   ));
-
 
   const winBlock = (
     <div className="main__win-block win-block">
@@ -299,14 +303,14 @@ export default function Home() {
         <button
           onClick={() => {
             setSquares(createsquares());
-						setWin(false)
-						setIsSelectedGlobal(false)
-						setWhoseTurn('white')
-						setKingPosition({
-							white: { row: 4, column: 1 },
-							black: { row: 4, column: 8 },
-						})
-						setPosibleMoves({})
+            setWin(false);
+            setIsSelectedGlobal(false);
+            setWhoseTurn("white");
+            setKingPosition({
+              white: { row: 4, column: 1 },
+              black: { row: 4, column: 8 },
+            });
+            setPosibleMoves({});
           }}
           className="win-block__button"
         >
@@ -315,8 +319,6 @@ export default function Home() {
       </div>
     </div>
   );
-
-  // <div className="home__square square square__first-color"></div>
 
   return (
     <main className="page">

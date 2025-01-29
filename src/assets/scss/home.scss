@@ -73,7 +73,7 @@
     &.white-turn {
       transform: rotate(180deg);
 
-      &>.square::before {
+      &>.square {
         transform: rotate(180deg);
       }
     }
@@ -172,78 +172,99 @@
       top: 0;
       left: 0;
       padding: 10px;
+			transition: opacity 0.2s, transform 0.2s, top 0.2s;
+			opacity: 0;
     }
+
+		&.selected {
+			&::before{
+				transform: scale(1.05);
+				top: -4px;
+			}
+		}
 
 
     &.pawn.black {
       &::before {
         background: url('../img/figures/Chess_pdt45.svg') center/cover no-repeat;
+				opacity: 1;
       }
     }
 
     &.pawn.white {
       &::before {
         background: url('../img/figures/pawn_white.svg') center/cover no-repeat;
+				opacity: 1;
       }
     }
 
     &.rook.white {
       &::before {
         background: url('../img/figures/rook_white.svg') center/cover no-repeat;
+				opacity: 1;
       }
     }
 
     &.rook.black {
       &::before {
         background: url('../img/figures/rook_black.svg') center/cover no-repeat;
+				opacity: 1;
       }
     }
 
     &.king.white {
       &::before {
         background: url('../img/figures/king_white.svg') center/cover no-repeat;
+				opacity: 1;
       }
     }
 
     &.king.black {
       &::before {
         background: url('../img/figures/king_black.svg') center/cover no-repeat;
+				opacity: 1;
       }
     }
 
     &.queen.white {
       &::before {
         background: url('../img/figures/queen_white.svg') center/cover no-repeat;
+				opacity: 1;
       }
     }
 
     &.queen.black {
       &::before {
         background: url('../img/figures/queen_black.svg') center/cover no-repeat;
+				opacity: 1;
       }
     }
 
     &.bishop.white {
       &::before {
         background: url('../img/figures/bishop_white.svg') center/cover no-repeat;
+				opacity: 1;
       }
     }
 
     &.bishop.black {
       &::before {
         background: url('../img/figures/bishop_black.svg') center/cover no-repeat;
+				opacity: 1;
       }
     }
 
     &.knight.white {
       &::before {
         background: url('../img/figures/knight_white.svg') center/cover no-repeat;
+				opacity: 1;
       }
     }
 
     &.knight.black {
       &::before {
         background: url('../img/figures/knight_black.svg') center/cover no-repeat;
+				opacity: 1;
       }
     }
   }
