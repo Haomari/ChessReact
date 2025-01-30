@@ -424,7 +424,7 @@ export default function Figures() {
 
         let posibleMoves = {
           figure: {},
-          moves: [],
+          moves: [], 
         };
         let moves = [];
 
@@ -509,8 +509,7 @@ export default function Figures() {
 						squares.some((square) =>{
 							if (move.row === square.position.row &&
 								move.column === square.position.column) {
-								if (square.isOccupied) {
-									if (square.color === whoseTurn) {
+									if (square.isOccupied && square.color === whoseTurn) {
 										return false
 									} else {
 										const figureDelete = {
@@ -544,17 +543,22 @@ export default function Figures() {
 											}
 										});
 
+										console.log(newSquares);
+										
+
 										const allOponentFigureSquares = newSquares.filter((square) => {
 											if (square.isOccupied === true && square.color !== whoseTurn) {
 													return true;
 											} else return false;
 										});
+										console.log(allOponentFigureSquares);
+										
 
 										const allOponentFigureMove = allOponentFigureSquares.flatMap(
 											(square) => {
 												const tempMoves = dynamicPossibleMoves(
 													square.figureType,
-													squares,
+													newSquares,
 													square,
 													whoseTurn
 												).moves;
@@ -562,24 +566,30 @@ export default function Figures() {
 											}
 										);
 
+										console.log(allOponentFigureMove);
+										
+
 										const isFound = allOponentFigureMove.some((opMove) => {
 											const isFoundLockal = 
 												move.row === opMove.row &&
 												move.column === opMove.column;
-						
-											return isFoundLockal ? false : true
-										})										
+
+											return isFoundLockal 
+										})		
+										
+										console.log(!isFound);
+										
 
 										return !isFound 
 
 									}
-								} else {
-									return true
-								}
 							}
 						}) 
 						return isThereFigure
 					})
+					
+
+					console.log(movesFiltered); 
 					
 					
 				const allOponentFigureSquares = squares.filter((square) => {

@@ -13,6 +13,7 @@ export default function Home() {
   });
   const [win, setWin] = useState(false);
   const [selectedSquare, setSelectedSquare] = useState({ row: 0, column: 0 });
+  const [animationTriger, setAnimationTriger] = useState(false);
 
   function createsquares() {
     const newsquares = [];
@@ -224,6 +225,8 @@ export default function Home() {
                   }
                 );
 
+								console.log(allOponentFigureMove);
+
                 if (allOponentFigureMove.length === 0) {
                   setWin(true);
                   setIsSelectedGlobal(false);
@@ -241,6 +244,7 @@ export default function Home() {
                 setWhoseTurn((lastTurn) =>
                   lastTurn === "white" ? "black" : "white"
                 );
+                setAnimationTriger(true);
               }
             }
           });
@@ -326,7 +330,11 @@ export default function Home() {
         <div className="main__container">
           <div
             className={`${
-              whoseTurn === "white" ? "white-turn" : "black-turn"
+              animationTriger
+                ? whoseTurn === "white"
+                  ? "white-turn"
+                  : "black-turn"
+                : ""
             } main__board`}
           >
             {squaresToGame}

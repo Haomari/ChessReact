@@ -1,5 +1,35 @@
 //====================================================================================================
+$tsm: 0;
 
+@keyframes scale-board-white-transition {
+
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+
+	50% {
+		transform: scale(0.6) rotate(90deg);
+	}
+
+  100% {
+		transform: scale(1) rotate(180deg);
+  }
+}
+
+@keyframes scale-board-black-transition {
+
+  0% {
+    transform: scale(1) rotate(180deg);
+  }
+
+	50% {
+		transform: scale(0.6) rotate(90deg);
+	}
+
+  100% {
+		transform: scale(1) rotate(0deg);
+  }
+}
 
 @keyframes bg-transition {
 
@@ -49,8 +79,6 @@
   }
 
   &__board {
-
-    // transform: matrix(0, -1, 1, 0, 0, 0);
     display: grid;
 
     
@@ -59,11 +87,16 @@
     width: 100%;
 
     aspect-ratio: 1/1;
-    // min-height: 20%;
-    // grid-template: repeat(8, 1fr)/repeat(8, 1fr);
     grid-template: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr / 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     align-content: center;
     justify-content: center;
+		transition: transform 0.3s;
+
+		transform: rotate(180deg);
+
+		&>.square {
+			transform: rotate(180deg);
+		}
 
 		@media (min-aspect-ratio: 10/11) {
 			height: 92%;
@@ -71,7 +104,17 @@
 		}
 
     &.white-turn {
-      transform: rotate(180deg);
+			transform: rotate(auto);
+
+			animation-name: scale-board-white-transition;
+			animation-duration: 0.2s;
+			animation-timing-function: linear;
+			animation-iteration-count: 1;
+			animation-direction: normal;
+			animation-fill-mode: forwards;
+      // transform: rotate(180deg);
+
+
 
       &>.square {
         transform: rotate(180deg);
@@ -79,7 +122,19 @@
     }
 
     &.black-turn {
-      transform: rotate(0deg);
+			transform: rotate(auto);
+      // transform: rotate(0deg);
+
+			animation-name: scale-board-black-transition;
+			animation-duration: 0.2s;
+			animation-timing-function: linear;
+			animation-iteration-count: 1;
+			animation-direction: normal;
+			animation-fill-mode: forwards;
+
+			&>.square {
+				transform: rotate(0deg);
+			}
     }
   }
 
