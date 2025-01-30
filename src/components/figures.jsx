@@ -543,16 +543,11 @@ export default function Figures() {
 											}
 										});
 
-										console.log(newSquares);
-										
-
 										const allOponentFigureSquares = newSquares.filter((square) => {
 											if (square.isOccupied === true && square.color !== whoseTurn) {
 													return true;
 											} else return false;
 										});
-										console.log(allOponentFigureSquares);
-										
 
 										const allOponentFigureMove = allOponentFigureSquares.flatMap(
 											(square) => {
@@ -566,9 +561,6 @@ export default function Figures() {
 											}
 										);
 
-										console.log(allOponentFigureMove);
-										
-
 										const isFound = allOponentFigureMove.some((opMove) => {
 											const isFoundLockal = 
 												move.row === opMove.row &&
@@ -576,20 +568,13 @@ export default function Figures() {
 
 											return isFoundLockal 
 										})		
-										
-										console.log(!isFound);
-										
 
 										return !isFound 
-
 									}
 							}
 						}) 
 						return isThereFigure
 					})
-					
-
-					console.log(movesFiltered); 
 					
 					
 				const allOponentFigureSquares = squares.filter((square) => {

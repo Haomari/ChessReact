@@ -225,8 +225,6 @@ export default function Home() {
                   }
                 );
 
-								console.log(allOponentFigureMove);
-
                 if (allOponentFigureMove.length === 0) {
                   setWin(true);
                   setIsSelectedGlobal(false);
